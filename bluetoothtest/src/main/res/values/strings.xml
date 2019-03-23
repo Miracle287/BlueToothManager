@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">BlueToothTest</string>
+
+    <string name="app_content">本程序启动一个蓝牙扫描服务</string>
+</resources>
