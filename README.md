@@ -7,12 +7,12 @@
 
 开发环境使用 Android Studio，平台API在Android 4.4以上均可
 
-项目有两个Module：
+项目有具有两个Module：
 
-![module](images/module.png)
-
-* app: 作为AIDL服务端，用于蓝牙定时扫描，并传回数据给客户端Module
+* app: 作为AIDL服务端，用于蓝牙定时扫描后台服务，并传回数据给客户端Module
 * bluetoothtest: 作为AIDL客户端，用于绑定服务端，定时获取蓝牙设备，并实时显示在界面上
+
+> NOTE: 将两个Module分别编译apk文件，先安装app，再安装bluetoothtest
 
 
 
