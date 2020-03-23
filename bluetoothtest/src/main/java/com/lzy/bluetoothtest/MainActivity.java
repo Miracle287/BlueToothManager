@@ -97,7 +97,7 @@ public class MainActivity extends Activity {
             Thread btTask = new Thread(){
                 @Override
                 public void run() {
-                    //每隔1秒获取蓝牙设备信息
+                    // 定时获取蓝牙设备信息
                     while(isBtConnectionAlive){
                         try {
                             Thread.sleep(500);
