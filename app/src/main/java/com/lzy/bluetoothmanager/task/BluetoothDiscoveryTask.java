@@ -2,6 +2,7 @@ package com.lzy.bluetoothmanager.task;
 
 import android.bluetooth.BluetoothAdapter;
 import android.os.AsyncTask;
+import android.util.Log;
 
 /**
  * Description: 蓝牙扫描任务
@@ -9,13 +10,14 @@ import android.os.AsyncTask;
  * @Author lzy
  */
 public class BluetoothDiscoveryTask extends AsyncTask<Void, Void, Void> {
+    private static final String TAG = "BluetoothDiscoveryTask";
 
     private BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
     @Override
     protected Void doInBackground(Void... voids) {
-        doDiscovery();
         try {
+            doDiscovery();
             Thread.sleep(10 * 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();

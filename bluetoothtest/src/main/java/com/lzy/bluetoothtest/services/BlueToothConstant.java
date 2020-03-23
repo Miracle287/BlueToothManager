@@ -1,4 +1,4 @@
-package com.lzy.bluetoothtest.Services;
+package com.lzy.bluetoothtest.services;
 
 /**
  * Description:

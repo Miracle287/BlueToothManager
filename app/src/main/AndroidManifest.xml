@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".Services.BluetoothService">
+        <service android:name=".service.BluetoothService">
             <intent-filter>
                 <action android:name="lzy.service.bluetooth"/>
             </intent-filter>

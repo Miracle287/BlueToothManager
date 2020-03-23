@@ -1,14 +1,12 @@
-package com.lzy.bluetoothmanager.Services;
+package com.lzy.bluetoothmanager.service;
 
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
-import android.os.RemoteException;
 
 import com.lzy.bluetoothmanager.BluetoothEventManager;
 import com.lzy.bluetoothmanager.IBlueToothService;
@@ -60,14 +58,14 @@ public class BluetoothService extends Service {
      * 蓝牙远程AIDL调用接口
      */
     private class BlueToothAIDLBinder extends IBlueToothService.Stub{
-
         @Override
-        public void fetchDeviceInfo(List<RmBluetoothDevice> devices) throws RemoteException {
+        public List<RmBluetoothDevice> getDevices() {
             if(mDiscoveryTask == null){
+                mDeviceManager.clearAll();
                 mDiscoveryTask = new BluetoothDiscoveryTask();
                 mDiscoveryTask.execute();
             }
-            devices = mDeviceManager.getAvailableDevices();
+            return mDeviceManager.getAvailableDevices();
         }
     }
 

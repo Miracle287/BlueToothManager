@@ -68,6 +68,9 @@ public class RmBluetoothDevice implements Parcelable {
     }
 
     public String getDeviceName() {
+        if(deviceName == null){
+            return deviceAddress;
+        }
         return deviceName;
     }
 

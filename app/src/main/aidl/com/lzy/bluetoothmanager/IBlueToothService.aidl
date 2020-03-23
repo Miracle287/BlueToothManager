@@ -6,6 +6,6 @@ import com.lzy.bluetoothmanager.RmBluetoothDevice;
 
 interface IBlueToothService {
 
-    void fetchDeviceInfo(out List<RmBluetoothDevice> devices);
+    List<RmBluetoothDevice> getDevices();
 
 }

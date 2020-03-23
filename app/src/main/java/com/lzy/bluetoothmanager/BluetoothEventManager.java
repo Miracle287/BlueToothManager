@@ -106,8 +106,7 @@ public class BluetoothEventManager {
     };
 
     private class AdapterStateChangedHandler implements Handler {
-        public void onReceive(Context context, Intent intent,
-                              BluetoothDevice device) {
+        public void onReceive(Context context, Intent intent, BluetoothDevice device) {
             int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,
                     BluetoothAdapter.ERROR);
             
@@ -127,8 +126,7 @@ public class BluetoothEventManager {
     }
 
     private class DeviceFoundHandler implements Handler {
-        public void onReceive(Context context, Intent intent,
-                              BluetoothDevice device) {
+        public void onReceive(Context context, Intent intent, BluetoothDevice device) {
             short rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
             BluetoothClass btClass = intent.getParcelableExtra(BluetoothDevice.EXTRA_CLASS);
             String name = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
@@ -136,12 +134,12 @@ public class BluetoothEventManager {
             RmBluetoothDevice rmDevice = mDeviceManager.findDevice(device.getAddress());
             if (rmDevice == null) {
                 rmDevice = mDeviceManager.addDevice(device);
-                Log.d(TAG, "DeviceFoundHandler created new RmBluetoothDevice: "
-                        + rmDevice);
+                Log.d(TAG, "DeviceFoundHandler created new RmBluetoothDevice: " + rmDevice);
             }
             rmDevice.setRSSI(rssi);
             rmDevice.setBtClass(btClass.getMajorDeviceClass());
             rmDevice.setDeviceName(name);
+            rmDevice.setDeviceAddress(device.getAddress());
             rmDevice.setVisible(true);
         }
     }
@@ -161,8 +159,7 @@ public class BluetoothEventManager {
     }
 
     private class DeviceDisappearedHandler implements Handler {
-        public void onReceive(Context context, Intent intent,
-                              BluetoothDevice device) {
+        public void onReceive(Context context, Intent intent, BluetoothDevice device) {
             RmBluetoothDevice RmDevice = mDeviceManager.findDevice(device.getAddress());
             if (RmDevice == null) {
                 Log.w(TAG, "received ACTION_DISAPPEARED for an unknown device: " + device);
@@ -173,15 +170,13 @@ public class BluetoothEventManager {
     }
 
     private class NameChangedHandler implements Handler {
-        public void onReceive(Context context, Intent intent,
-                              BluetoothDevice device) {
+        public void onReceive(Context context, Intent intent, BluetoothDevice device) {
             mDeviceManager.onDeviceNameUpdated(device);
         }
     }
 
     private class BondStateChangedHandler implements Handler {
-        public void onReceive(Context context, Intent intent,
-                              BluetoothDevice device) {
+        public void onReceive(Context context, Intent intent, BluetoothDevice device) {
             if (device == null) {
                 Log.e(TAG, "ACTION_BOND_STATE_CHANGED with no EXTRA_DEVICE");
                 return;
@@ -194,20 +189,16 @@ public class BluetoothEventManager {
             if (RmDevice == null) {
 
             }
-
         }
-        
     }
 
     private class ClassChangedHandler implements Handler {
-        public void onReceive(Context context, Intent intent,
-                              BluetoothDevice device) {
+        public void onReceive(Context context, Intent intent, BluetoothDevice device) {
         }
     }
 
     private class UuidChangedHandler implements Handler {
-        public void onReceive(Context context, Intent intent,
-                              BluetoothDevice device) {
+        public void onReceive(Context context, Intent intent, BluetoothDevice device) {
         }
     }
 

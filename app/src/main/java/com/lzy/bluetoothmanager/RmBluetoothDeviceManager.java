@@ -51,7 +51,9 @@ public class RmBluetoothDeviceManager {
 
     public void onDeviceNameUpdated(BluetoothDevice device){
         RmBluetoothDevice rmDevice = findDevice(device.getAddress());
-        rmDevice.setDeviceName(device.getName());
+        if (rmDevice != null) {
+            rmDevice.setDeviceName(device.getName());
+        }
     }
 
     public List<RmBluetoothDevice> getAvailableDevices(){

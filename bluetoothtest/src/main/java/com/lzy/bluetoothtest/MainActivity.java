@@ -1,19 +1,20 @@
 package com.lzy.bluetoothtest;
 
 import android.app.Activity;
-import android.bluetooth.BluetoothDevice;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.Bundle;
-import android.os.RemoteException;
 import android.util.Log;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.lzy.bluetoothmanager.IBlueToothService;
 import com.lzy.bluetoothmanager.RmBluetoothDevice;
-import com.lzy.bluetoothtest.Services.BlueToothConstant;
+import com.lzy.bluetoothtest.services.BlueToothConstant;
+import com.lzy.bluetoothtest.adapter.BluetoothDevicesListAdapter;
 import com.lzy.bluetoothtest.model.TsEvent;
 import com.lzy.bluetoothtest.utils.EventBusUtil;
 
@@ -21,41 +22,57 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends Activity {
     public final static String TAG = MainActivity.class.getSimpleName();
 
-    private TextView mainTestTv;
+    private TextView startBtn;
+    private ListView deviceLv;
+
+    private BluetoothDevicesListAdapter mDeviceAdapter;
 
     private IBlueToothService blueToothAidlBinder;
 
     private ServiceConnection btConnection;
     private boolean isBtConnectionAlive;
 
+    private List<RmBluetoothDevice> devices = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EventBus.getDefault().register(this);
         initView();
         btConnection = new BlueToothRemoteConnection();
         isBtConnectionAlive = false;
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
         isBtConnectionAlive = false;
+        EventBus.getDefault().unregister(this);
     }
 
     /**
      * 初始化视图控件
      */
     public void initView(){
-        mainTestTv = findViewById(R.id.main_test_tv);
-        mainTestTv.setText(getString(R.string.app_content));
+        startBtn = findViewById(R.id.main_start_btn);
+        deviceLv = findViewById(R.id.main_devices_lv);
+
+        startBtn.setText(getString(R.string.start_discovery));
+        startBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isBtConnectionAlive) {
+                    EventBusUtil.post(BlueToothConstant.EVENT_START_DISCOVERY, null);
+                }
+            }
+        });
     }
 
     /**
@@ -70,9 +87,6 @@ public class MainActivity extends Activity {
      * 连接远程蓝牙扫描服务
      */
     private class BlueToothRemoteConnection implements ServiceConnection{
-
-        List<RmBluetoothDevice> devices;
-
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             isBtConnectionAlive = true;
@@ -86,9 +100,9 @@ public class MainActivity extends Activity {
                     //每隔1秒获取蓝牙设备信息
                     while(isBtConnectionAlive){
                         try {
-                            Thread.sleep(1000);
-                            blueToothAidlBinder.fetchDeviceInfo(devices);
-                            EventBusUtil.post(BlueToothConstant.EVENT_DEVICES_DESCOVERYING, devices);
+                            Thread.sleep(500);
+                            devices = blueToothAidlBinder.getDevices();
+                            EventBusUtil.post(BlueToothConstant.EVENT_DEVICES_DESCOVERYING, null);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -96,7 +110,6 @@ public class MainActivity extends Activity {
                 }
             };
             btTask.start();
-
         }
 
         @Override
@@ -104,7 +117,6 @@ public class MainActivity extends Activity {
             unbindService(btConnection);
             isBtConnectionAlive = false;
         }
-
     }
 
     /**
@@ -118,8 +130,7 @@ public class MainActivity extends Activity {
                 handleStartDiscovery();
                 break;
             case BlueToothConstant.EVENT_DEVICES_DESCOVERYING:
-                List<RmBluetoothDevice> devices = (List<RmBluetoothDevice>)event.getValue();
-                handleFoundDevices(devices);
+                handleFoundDevices();
                 break;
             default:
                 break;
@@ -132,12 +143,19 @@ public class MainActivity extends Activity {
         }
     }
 
-    private void handleFoundDevices(List<RmBluetoothDevice> devices){
+    private void handleFoundDevices(){
         if(devices != null && devices.size() > 0){
             for(RmBluetoothDevice device : devices) {
-                Log.e(TAG, "发现设备: " + device.getDeviceName() + " -- " + device.getDeviceAddress());
+                Log.e(TAG, "Found device: " + device.getDeviceName() + " -- " + device.getDeviceAddress());
             }
         }
-    }
 
+        if (mDeviceAdapter == null) {
+            mDeviceAdapter = new BluetoothDevicesListAdapter(MainActivity.this, devices);
+            deviceLv.setAdapter(mDeviceAdapter);
+        } else {
+            mDeviceAdapter.setList(devices);
+            mDeviceAdapter.notifyDataSetChanged();
+        }
+    }
 }
