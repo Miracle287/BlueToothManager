@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,8 +82,25 @@ public class MainActivity extends Activity {
      * 远程连接蓝牙服务器
      */
     public void toConnectServer(){
-        Intent intent = new Intent(BlueToothConstant.BLUETOOTH_SERVICE_ACTION);
-        bindService(intent, btConnection, BIND_AUTO_CREATE);
+        Intent intent = new Intent();
+        intent.setAction(BlueToothConstant.BLUETOOTH_SERVICE_ACTION);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            // Android 5.0 之后必须设置组件
+            PackageManager pm = getApplication().getPackageManager();
+            List<ResolveInfo> resolveInfo = pm.queryIntentServices(intent, 0);
+            if (resolveInfo != null && resolveInfo.size() == 1) {
+                ResolveInfo serviceInfo = resolveInfo.get(0);
+                String packageName = serviceInfo.serviceInfo.packageName;
+                String className = serviceInfo.serviceInfo.name;
+                Intent componentIntent = new Intent(intent);
+                componentIntent.setComponent(new ComponentName(packageName, className));
+                bindService(componentIntent, btConnection, BIND_AUTO_CREATE);
+            } else {
+                Log.e(TAG, "BluetoothService is not installed.");
+            }
+        } else {
+            bindService(intent, btConnection, BIND_AUTO_CREATE);
+        }
     }
 
     /**

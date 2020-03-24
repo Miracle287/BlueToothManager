@@ -3,6 +3,12 @@
 
 
 
+## 更新
+
+[2020.3.24] 修复Android 5.0及以上平台Intent隐式调用Service的问题 
+
+
+
 ## 使用
 
 开发环境使用 Android Studio，平台API在Android 4.4以上均可
