@@ -5,6 +5,8 @@
 
 ## 更新
 
+[2020.3.25] 优化蓝牙扫描服务调用逻辑和服务异常关闭退出逻辑
+
 [2020.3.24] 修复Android 5.0及以上平台Intent隐式调用Service的问题 
 
 
@@ -13,7 +15,7 @@
 
 开发环境使用 Android Studio，平台API在Android 4.4以上均可
 
-项目有具有两个Module：
+项目具有两个Module：
 
 * app: 作为AIDL服务端，用于蓝牙定时扫描后台服务，并传回数据给客户端Module
 * bluetoothtest: 作为AIDL客户端，用于绑定服务端，定时获取蓝牙设备，并实时显示在界面上

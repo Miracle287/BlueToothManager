@@ -56,7 +56,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        isBtConnectionAlive = false;
+        if (isBtConnectionAlive) {
+            unbindService(btConnection);
+            isBtConnectionAlive = false;
+        }
         EventBus.getDefault().unregister(this);
     }
 
@@ -71,9 +74,7 @@ public class MainActivity extends Activity {
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isBtConnectionAlive) {
-                    EventBusUtil.post(BlueToothConstant.EVENT_START_DISCOVERY, null);
-                }
+                EventBusUtil.post(BlueToothConstant.EVENT_START_DISCOVERY, null);
             }
         });
     }
@@ -109,6 +110,7 @@ public class MainActivity extends Activity {
     private class BlueToothRemoteConnection implements ServiceConnection{
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.e(TAG, "BlueToothRemoteConnection Connected");
             isBtConnectionAlive = true;
 
             //获取远程传回的服务接口
@@ -134,7 +136,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            unbindService(btConnection);
+            Log.e(TAG, "BlueToothRemoteConnection Disconnected");
             isBtConnectionAlive = false;
         }
     }
